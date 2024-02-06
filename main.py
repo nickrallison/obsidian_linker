@@ -69,11 +69,13 @@ def get_links(alias_tree, words, bad_links=[]):
         index = index + 1
     return links
 
+
 def descend_tree(tree, words):
     current_tree = tree
     for word in words:
         current_tree = current_tree[word]
     return current_tree
+
 
 def clean_file(file):
     file = re.sub(r'```[\s\S]*?```', '', file)
@@ -84,6 +86,7 @@ def clean_file(file):
 
     return file
 
+
 def get_frontmatter(file_paths):
     frontmatter = {}
     for file_path in file_paths:
@@ -93,6 +96,7 @@ def get_frontmatter(file_paths):
         reg_frontmatter = yaml.load(reg_yaml, Loader=yaml.FullLoader)
         frontmatter[file_path] = reg_frontmatter
     return frontmatter
+
 
 def get_aliases(files):
     file_paths = [file for file in files]
@@ -116,6 +120,7 @@ def get_aliases(files):
 
     return construct_tree_from_aliases(aliases)
 
+
 def get_file_dict(file_paths):
 
     files = {}
@@ -138,6 +143,7 @@ def get_file_dict(file_paths):
         }
 
     return files
+
 
 def separate_string_fsm(content):
     start_state = 0
@@ -234,15 +240,15 @@ if __name__ == '__main__':
 
     #### Setup ####
 
-    # args = sys.argv
-    # root_path = args[1]
+    args = sys.argv
+    root_path = args[1]
     max_distance = 2
 
-    root_path = "." # For testing
+
 
     #### Get File Paths ####
 
-    relevant_folders = [os.path.join("assets", "500-Zettelkasten", "Cards")]
+    relevant_folders = [os.path.join("500-Zettelkasten", "Cards")]
     file_paths = []
     for relative_folder in relevant_folders:
         folder = os.path.join(root_path, relative_folder)
@@ -252,7 +258,7 @@ if __name__ == '__main__':
 
     file_indices = {file_paths[i]: i for i in range(len(file_paths))}
     num_files = len(file_paths)
-    serialize_dict_to_json(file_paths, "assets/file_paths.json")
+    # serialize_dict_to_json(file_paths, "assets/file_paths.json")
 
     #### Get Files ####
 
@@ -264,12 +270,12 @@ if __name__ == '__main__':
         file = files[file_path]
         file['separated'] = separate_string_fsm(file['body'])
 
-    serialize_dict_to_json(files, "assets/files.json")
+    # serialize_dict_to_json(files, "assets/files.json")
 
     #### Get Aliases ####
 
     alias_tree = get_aliases(files)
-    serialize_dict_to_json(alias_tree, "assets/alias_tree.json")
+    # serialize_dict_to_json(alias_tree, "assets/alias_tree.json")
 
     #### Get Links ####
 
@@ -283,7 +289,7 @@ if __name__ == '__main__':
         file_links = get_links(alias_tree, cleaned_words, bad_links)
         links[file_path] = file_links
 
-    serialize_dict_to_json(links, "assets/links.json")
+    # serialize_dict_to_json(links, "assets/links.json")
 
     #### Get Tags ####
 
@@ -296,7 +302,7 @@ if __name__ == '__main__':
                 if tag not in tags:
                     tags[tag] = []
                 tags[tag].append(file_path)
-    serialize_dict_to_json(tags, "assets/tags.json")
+    # serialize_dict_to_json(tags, "assets/tags.json")
 
     #### Get Graph ####
 
@@ -309,7 +315,7 @@ if __name__ == '__main__':
                     file_graph[file_indices[file1]][file_indices[file2]] = 1
                     file_graph[file_indices[file2]][file_indices[file1]] = 1
 
-    serialize_dict_to_json(file_graph, "assets/file_graph.json")
+    # serialize_dict_to_json(file_graph, "assets/file_graph.json")
     graph = csr_matrix(file_graph)
     dist_matrix, predecessors = dijkstra(csgraph=graph, directed=False, indices=0, return_predecessors=True)
 
@@ -334,7 +340,7 @@ if __name__ == '__main__':
                         clean_links[file_path] = []
                     clean_links[file_path].append(link_inner)
 
-    serialize_dict_to_json(clean_links, "assets/clean_links.json")
+    # serialize_dict_to_json(clean_links, "assets/clean_links.json")
 
     #### Add Links ####
     for file_path in files:
@@ -352,7 +358,7 @@ if __name__ == '__main__':
                 files[file_path]['separated'][link['start_index']] = ("link", link_text)
 
     linked_files = files
-    serialize_dict_to_json(linked_files, "assets/linked_files.json")
+    # serialize_dict_to_json(linked_files, "assets/linked_files.json")
 
     for file_path in file_paths:
         new_body = linked_files[file_path]["frontmatter_string"] + linked_files[file_path]["middle_spaces"] + "".join(
