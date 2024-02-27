@@ -125,7 +125,7 @@ def get_file_dict(file_paths):
 
     files = {}
     for file_path in file_paths:
-        print(file_path)
+        # print(file_path)
         file_raw = open_file(file_path)
         search = re.search(
             r'^(?P<frontmatter>---(?P<frontmatter_inner>[\s\S]*?)---)?(?P<middle_spaces>\s*)(?P<body>[\s\S]*)?$',
